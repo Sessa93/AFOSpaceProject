@@ -59,8 +59,8 @@ public class MoveActionEffect extends ActionEffect {
 			// Checks that source and target are adjacent according to the speed
 			// of the player
 			if (map.checkSectorAdiacency(sourceSector, targetSector,
-					currentPlayer.getSpeed(), 0, currentPlayer.getPlayerType(),
-					sourceSector, currentPlayer.isAdrenaline())) {
+					currentPlayer.getSpeed(), currentPlayer.getPlayerType(),
+					currentPlayer.isAdrenaline())) {
 				// This two lines implements the move
 				sourceSector.removePlayer(currentPlayer);
 				currentPlayer.setSector(targetSector);

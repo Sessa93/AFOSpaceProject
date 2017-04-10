@@ -5,9 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.jgrapht.GraphPath;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.NeighborIndex;
 import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.Graphs;
 
 import common.Coordinate;
 import common.Sector;
@@ -218,15 +220,10 @@ public class GameMap {
 	 *            the first sector
 	 * @param targetSector
 	 *            the second sector
-	 * @param maxLen
-	 *            the maximum distance to consider to check if the two given
-	 *            sectors are adjacent
-	 * @param currLen
-	 *            MUST always be 0
 	 * @param playerType
 	 *            the type of player, true if human, false if alien
 	 * 
-	 * @param equals
+	 * @param adrenalined
 	 *            If True then the function return True iff the distance between
 	 *            sourceSector and targetSector equals to maxLen, if False than
 	 *            the distance between sourceSector and targetSecto could be
@@ -235,8 +232,10 @@ public class GameMap {
 	 *         speed
 	 */
 	public boolean checkSectorAdiacency(Sector sourceSector,
-			Sector targetSector, int maxLen, int currLen,
-			PlayerType playerType, Sector startingSector, boolean equals) {
+			Sector targetSector, int speed,
+			PlayerType playerType, boolean adrenalined) {
+
+
 		/*
 		 * A recursive function. At each level of recursion source contains the
 		 * sector from which building the path toward target. If source isn't
@@ -245,71 +244,57 @@ public class GameMap {
 		 * recursion ends with false otherwise the recursion proceeds until
 		 * source == target and the correct path length(depth) has been reached.
 		 */
-		if (currLen >= maxLen && !sourceSector.equals(targetSector))
-			return false;
-		Iterator<Sector> listIterator;
+
 		// If Human
 		if (playerType == PlayerType.HUMAN) {
-			// Returns false because the currLen of the path is equal to maxLen
-			// but source is different from target
-			if (sourceSector.equals(targetSector)
-					&& sourceSector.getSectorType() != SectorType.ALIEN) {
-				if (equals && currLen == maxLen)
-					return true;
-				if (!equals && currLen <= maxLen)
-					return true;
-			}
+			if(targetSector.getSectorLegality() == SectorLegality.NONE) return false;
+			else {
+				List<Sector> levelOneNeighbors = Graphs.neighborListOf(this.graph, sourceSector);
+				List<Sector> levelTwoNeighbors = new ArrayList<Sector>();
 
-			// if source isn't crossable by Human then this path is not valid
-			if (sourceSector.getSectorType() == SectorType.ALIEN)
-				return false;
-
-			// Get an iterator to retrieve a list of the neighbors of source
-			listIterator = this.searchableGraph.neighborListOf(sourceSector)
-					.iterator();
-			while (listIterator.hasNext()) {
-				// Call recursively checkAdiacency passing as source the
-				// neighbors of the current source
-				Sector toVisit = listIterator.next();
-				if (!startingSector.equals(toVisit)) {
-
-					if (checkSectorAdiacency(toVisit, targetSector, maxLen,
-							currLen + 1, playerType, startingSector, equals))
-						return true;
+				if(adrenalined) {
+					for (Sector s1 : levelOneNeighbors) {
+						if (s1.getSectorLegality() == SectorLegality.ALL || s1.getSectorLegality() == SectorLegality.HUMAN) {
+							for (Sector s2 : Graphs.neighborListOf(this.graph, s1)) {
+								levelTwoNeighbors.add(s2);
+							}
+						}
+					}
+					if(levelTwoNeighbors.contains(targetSector)) return true;
+					return false;
 				}
+				if(levelOneNeighbors.contains(targetSector)) return true;
+				return false;
 			}
 		}
 		// If Alien
 		else {
-			// Returns false because the currLen of the path is equal to maxLen
-			// but source is different from target
-			if (sourceSector.equals(targetSector)
-					&& sourceSector.getSectorType() != SectorType.HUMAN) {
-				if (equals && currLen == maxLen)
-					return true;
-				if (!equals && currLen <= maxLen)
-					return true;
-			}
-			// if source isn't crossable by Alien then this path is not valid
-			if (sourceSector.getSectorType() == SectorType.HUMAN)
-				return false;
+			if(targetSector.getSectorLegality() == SectorLegality.NONE || targetSector.getSectorLegality() == SectorLegality.HUMAN) return false;
+			else {
+				List<Sector> levelOneNeighbors = Graphs.neighborListOf(this.graph, sourceSector);
+				List<Sector> levelTwoNeighbors = new ArrayList<Sector>();
+				List<Sector> levelThreeNeighbors = new ArrayList<Sector>();
 
-			// Get an iterator to retrieve a list of the neighbors of source
-			listIterator = this.searchableGraph.neighborListOf(sourceSector)
-					.iterator();
-			while (listIterator.hasNext()) {
-				// Call recursively checkAdiacency passing as source the
-				// neighbors of the current source
-				Sector toVisit = listIterator.next();
-				if (!startingSector.equals(toVisit)) {
-
-					if (checkSectorAdiacency(toVisit, targetSector, maxLen,
-							currLen + 1, playerType, startingSector, equals))
-						return true;
+				for (Sector s1 : levelOneNeighbors) {
+					if (s1.getSectorLegality() == SectorLegality.ALL) {
+						for (Sector s2 : Graphs.neighborListOf(this.graph, s1)) {
+							levelTwoNeighbors.add(s2);
+						}
+					}
 				}
+				if(speed > 2) {
+					for (Sector s2 : levelTwoNeighbors) {
+						if (s2.getSectorLegality() == SectorLegality.ALL) {
+							for (Sector s3 : Graphs.neighborListOf(this.graph, s2)) {
+								levelThreeNeighbors.add(s3);
+							}
+						}
+					}
+				}
+				if(levelOneNeighbors.contains(targetSector) || levelTwoNeighbors.contains(targetSector) || levelThreeNeighbors.contains(targetSector)) return true;
+				return false;
 			}
 		}
-		return false;
 	}
 
 	/**

@@ -12,7 +12,6 @@ import common.SectorType;
 
 /**
  * @author Andrea Sessa
- * @see Map Some tests for the map class
  */
 public class GameMapTest {
 
@@ -72,36 +71,39 @@ public class GameMapTest {
 		UndirectedGraph<Sector, DefaultEdge> graph = new SimpleGraph<Sector, DefaultEdge>(
 				DefaultEdge.class);
 		Sector s1 = new Sector(new Coordinate('A', 1), SectorType.SAFE);
-		Sector s2 = new Sector(new Coordinate('A', 2), SectorType.ALIEN);
+		Sector s2 = new Sector(new Coordinate('A', 2), SectorType.SAFE);
 		Sector s3 = new Sector(new Coordinate('A', 3), SectorType.SAFE);
 		Sector s4 = new Sector(new Coordinate('A', 4), SectorType.SAFE);
 		Sector s5 = new Sector(new Coordinate('A', 5), SectorType.HUMAN);
+		Sector s6 = new Sector(new Coordinate('A', 6), SectorType.SAFE);
+
 		graph.addVertex(s1);
 		graph.addVertex(s2);
 		graph.addVertex(s3);
 		graph.addVertex(s4);
 		graph.addVertex(s5);
+		graph.addVertex(s6);
+
 		graph.addEdge(s1, s2);
 		graph.addEdge(s2, s3);
 		graph.addEdge(s3, s4);
 		graph.addEdge(s1, s5);
+		graph.addEdge(s5,s6);
 
 		// Create a new Map map starting from the graph defined above
 		GameMap map = new GameMap(graph, 0, 0, 0, 0, "");
 
 		// Checks the return value of checkAdiacency
-		assertFalse(map.checkSectorAdiacency(s1, s2, 1, 0, PlayerType.HUMAN,
-				s1, false));
-		assertFalse(map.checkSectorAdiacency(s1, s3, 2, 0, PlayerType.HUMAN,
-				s1, true));
-		assertTrue(map.checkSectorAdiacency(s1, s2, 2, 0, PlayerType.ALIEN, s1,
-				false));
-		assertTrue(map.checkSectorAdiacency(s1, s2, 1, 0, PlayerType.ALIEN, s1,
-				true));
-		assertTrue(map.checkSectorAdiacency(s3, s4, 1, 0, PlayerType.HUMAN, s3,
-				false));
-		assertFalse(map.checkSectorAdiacency(s1, s5, 1, 0, PlayerType.ALIEN,
-				s1, true));
+		assertTrue(map.checkSectorAdiacency(s1,s2,1,PlayerType.HUMAN,false));
+		assertTrue(map.checkSectorAdiacency(s1,s3,1,PlayerType.HUMAN,true));
+		assertFalse(map.checkSectorAdiacency(s1,s3,1,PlayerType.HUMAN,false));
+
+		assertFalse(map.checkSectorAdiacency(s1,s5,1,PlayerType.ALIEN,false));
+		assertTrue(map.checkSectorAdiacency(s1,s2,1,PlayerType.ALIEN,false));
+		assertTrue(map.checkSectorAdiacency(s1,s3,1,PlayerType.ALIEN,false));
+		assertTrue(map.checkSectorAdiacency(s1,s4,3,PlayerType.ALIEN,false));
+		assertFalse(map.checkSectorAdiacency(s1,s4,2,PlayerType.ALIEN,false));
+		assertFalse(map.checkSectorAdiacency(s1,s6,2,PlayerType.ALIEN,false));
 	}
 
 	/**

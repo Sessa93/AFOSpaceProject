@@ -67,9 +67,8 @@ public class MoveAttackActionEffect extends ActionEffect {
 		String psMessage = "";
 
 		if (!sourceSector.equals(moveAttackAction.getTarget())) {
-			if (game.getMap().checkSectorAdiacency(sourceSector, targetSector,
-					currentPlayer.getSpeed(), 0, currentPlayer.getPlayerType(),
-					sourceSector, currentPlayer.isAdrenaline())) {
+			if (game.getMap().checkSectorAdiacency(sourceSector, targetSector, currentPlayer.getSpeed(),
+					currentPlayer.getPlayerType(), currentPlayer.isAdrenaline())) {
 				
 				// For each player contained in the target sector
 				for (Player player : targetSector.getPlayers()) {
