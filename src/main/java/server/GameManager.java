@@ -22,7 +22,7 @@ import common.RemoteMethodCall;
  * @author Giorgio Pea
  */
 public class GameManager {
-	private static final int GAME_TIMEOUT = 10 * 1000 * 60;
+	private static final int GAME_TIMEOUT = 90 * 1000; // 1 minute and half
 
 	// From game id to game to game
 	private volatile Map<Integer, Game> fromGameIdToGame;

@@ -350,7 +350,7 @@ public class GuiInteractionManager implements Observer {
 
 	/**
 	 * This method is used to handle the situation in which the user has drawn
-	 * the fourth objetc card and need to discard or use one
+	 * the fourth object card and need to discard or use one
 	 */
 	private void manyCardHandler() {
 

@@ -87,7 +87,7 @@ public class PSClientNotification extends ClientNotification implements
 	/**
 	 * Adds a new player to the list of dead players
 	 * 
-	 * @param deadPlayers
+	 * @param deadPlayer
 	 *            the player to add to the list
 	 * @throws IllegalArgumentException
 	 *             if deadPlayer is null
@@ -110,8 +110,8 @@ public class PSClientNotification extends ClientNotification implements
 	/**
 	 * Adds a new player to the list of the attacked player
 	 * 
-	 * @param attackedPlayers
-	 * @throws IllegalArgumentExceptio
+	 * @param attackedPlayer
+	 * @throws IllegalArgumentException
 	 *             if attackedPlayer is null
 	 */
 	public void addAttackedPlayers(PlayerToken attackedPlayer) {

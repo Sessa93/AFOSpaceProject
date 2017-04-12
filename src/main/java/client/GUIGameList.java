@@ -72,6 +72,7 @@ public class GUIGameList extends JPanel {
 
 		GamePollingThread pollingThread = new GamePollingThread(gui, gameTables);
 		final Timer timerTask = new Timer();
+
 		pollingThread.updateGames();
 
 		timerTask.scheduleAtFixedRate(pollingThread, 0, 10000);
@@ -153,7 +154,7 @@ public class GUIGameList extends JPanel {
 							gui.getFrame(), "Insert the player name: ",
 							"Player name", JOptionPane.PLAIN_MESSAGE);
 					if (name != null)
-						stateMessage.setText("Waiting for other player");
+						stateMessage.setText("Waiting for other players");
 					mapName = (String) JOptionPane.showInputDialog(
 							gui.getFrame(), "Choose the map: ", "Map",
 							JOptionPane.PLAIN_MESSAGE, null, possibilities,

@@ -48,15 +48,16 @@ public class GamePollingThread extends TimerTask {
 		} catch (InterruptedException e1) {
 			ClientLogger.getLogger().log(Level.SEVERE, e1.getMessage(), e1);
 		}
-		for (int i = 0; i < tableModel.getRowCount(); i++) {
-			tableModel.removeRow(i);
-		}
+		tableModel.setRowCount(0);
+
 		Object[][] data;
 		try {
 			data = this.retrieveGamesData();
 			for (int i = 0; i < data.length; i++) {
+				System.out.println(data[i].toString());
 				tableModel.addRow(data[i]);
 			}
+			System.out.println("---\n");
 		} catch (IllegalAccessException | InvocationTargetException
 				| NoSuchMethodException | ClassNotFoundException | IOException
 				| NotBoundException e) {
@@ -75,13 +76,14 @@ public class GamePollingThread extends TimerTask {
 			InvocationTargetException, NoSuchMethodException,
 			ClassNotFoundException, IOException, NotBoundException {
 		List<GamePublicData> games = gui.getClient().getGames();
+
+		System.out.println(games.size());
+
 		Object[][] data = new Object[games.size()][3];
-		int i = 0;
-		for (GamePublicData game : games) {
-			data[i][0] = game.getId();
-			data[i][1] = game.getStatus();
-			data[i][2] = game.getPlayersCount();
-			i++;
+		for (int i = 0; i < games.size(); i++) {
+			data[i][0] = games.get(i).getId();
+			data[i][1] = games.get(i).getStatus();
+			data[i][2] = games.get(i).getPlayersCount();
 		}
 		return data;
 	}
@@ -90,9 +92,6 @@ public class GamePollingThread extends TimerTask {
 	 * One time updating of the list of games
 	 */
 	public void updateGames() {
-		for (int i = 0; i < tableModel.getRowCount(); i++) {
-			tableModel.removeRow(i);
-		}
 		Object[][] data;
 		try {
 			data = this.retrieveGamesData();
